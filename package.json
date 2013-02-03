@@ -1,0 +1,17 @@
+{
+  "name": "utils",
+  "version": "0.0.0",
+  "description": "shared utils for javascript",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jamesjwood/utils.git"
+  },
+  "author": "James Wood",
+  "license": "BSD",
+  "readmeFilename": "README.md",
+  "gitHead": "8f8be6273fad3e77d401f1cbdccf6e4d09f5a058"
+}
