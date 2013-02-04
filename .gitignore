@@ -6,23 +6,22 @@ lib-cov
 *.out
 *.pid
 *.gz
+*.dmg
+*.app
 
 pids
 logs
 results
 
-npm-debug.log
 node_modules/
 stage/
 
-coverage.html
 .DS_Store
+coverage.html
+npm-debug.log
 
-*.dmg
 
-*.app
 
-bin/
 
-tmp/
+
 
