@@ -7,8 +7,23 @@ exports.uuid = function () {
   });
 };
 
-exports.cb = function (callback, innerFunction) {
+exports.cb = function () {
   "use strict";
+  var callback;
+  var innerFunction;
+  var name;
+  if(arguments.length ==3)
+  {
+    name = arguments[0];
+    callback = arguments[1];
+    innerFunction = arguments[2];
+  }
+  else
+  {
+    callback = arguments[0];
+    innerFunction = arguments[1];
+  }
+
   if (!callback) {
     throw new Error('callback was not passed');
   }
@@ -44,6 +59,7 @@ exports.cb = function (callback, innerFunction) {
       }
     }
     try {
+      that.log('end');
       innerFunction.apply(this, newArgs);
     }
     catch (er2) {
@@ -58,8 +74,17 @@ exports.cb = function (callback, innerFunction) {
   }
 
   that.log = function (message) {
-    callback.log(message);
+    if (typeof name !== null)
+    {
+      callback.log(name + ": " + message);
+    }
+    else
+    {
+      callback.log(message);
+    }
+    
   };
 
+  that.log('start');
   return that;
 };
