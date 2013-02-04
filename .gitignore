@@ -14,3 +14,15 @@ results
 npm-debug.log
 node_modules/
 stage/
+
+coverage.html
+.DS_Store
+
+*.dmg
+
+*.app
+
+bin/
+
+tmp/
+
