@@ -1,21 +1,26 @@
-module.exports = function (logger, name, functionToBeWrapped) {
-  "use strict";
 
-  console.dir();
 
-  var newLogger = {
-		log: function (message) {
-    logger.log(name + ": " + message);
-  }
+
+var addWrap  = function(f){
+	f.wrap = function(name){
+		var newFunc = function(message){
+			f(name + ": " + message);
+		};
+		return addWrap(newFunc);
+	};
+	return f;
 };
 
 
-  var wrappedFunction = function () {
-    newLogger.log('start');
-    var results = functionToBeWrapped.apply(newLogger, arguments);
-    newLogger.log('end');
-    return results;
-  };
-  return wrappedFunction;
+module.exports = function(){
+ 	var logFunction = function(message){
+ 		console.log(message)
+ 	}
+ 	return addWrap(logFunction);
 };
 
+
+
+module.exports.logz = function logger (){
+	console.log(logger.caller);
+};

@@ -1,3 +1,5 @@
+var log = require('./log.js');
+
 module.exports = function () {
   "use strict";
   var callback;
@@ -61,16 +63,22 @@ module.exports = function () {
   if (callback.task) {
     that.task = callback.task;
   }
-
-  that.log = function (message) {
-    if (typeof name !== null) {
-      callback.log(name + ": " + message);
+  if(typeof callback.log !== 'undefined')
+  {
+    if(typeof callback.log.wrap !== 'undefined')
+    {
+        that.log = callback.log.wrap(name);
     }
-    else {
-      callback.log(message);
+    else
+    {
+      that.log = callback.log;
     }
-
-  };
+    
+  }
+  else
+  {
+    that.log = function(){};
+  }
 
   that.log('start');
   return that;
