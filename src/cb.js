@@ -26,6 +26,15 @@ module.exports = function () {
     }
   }
 
+  var nextTickCallback = function(){
+    var myArgs = arguments;
+    process.nextTick(function () {
+      callback.apply(this, myArgs);
+    });
+  };
+  
+  nextTickCallback.log = callback.log;
+
   if (!callback) {
     throw new Error('callback was not passed');
   }
@@ -37,26 +46,21 @@ module.exports = function () {
     try {
       var error = arguments[0];
       if (error) {
-        //callback(error);
-        process.nextTick(function () {
           callback(error);
-        });
         return;
       }
 
       for (var i = 1; i < arguments.length; i++) {
         newArgs.push(arguments[i]);
       }
+      //newArgs.push(callback);
 
     }
     catch (er) {
       //var newError = new Error("Error at listrbro.cb");
       //newError.innerException  = er;
       if (callback) {
-        //callback(er);
-        process.nextTick(function () {
           callback(er);
-        });
         return;
       }
       else {
@@ -65,13 +69,12 @@ module.exports = function () {
     }
     try {
       that.log('end');
-      innerFunction.apply(this, newArgs);
+      //process.nextTick(function () {
+        innerFunction.apply(this, newArgs);
+      //});
     }
     catch (er2) {
-      //callback(er2);
-      process.nextTick(function () {
         callback(er2);
-      });
     }
   };
   if (callback.task) {
