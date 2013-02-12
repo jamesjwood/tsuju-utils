@@ -10,6 +10,7 @@ var sinon = require('sinon');
 var assert = require('assert');
 
 var cb = require('../src/cb.js');
+var log = require('../src/log.js');
 
 describe('cb', function () {
   'use strict';
@@ -44,11 +45,12 @@ describe('cb', function () {
     var onFinish = function (error) {
 
     };
-    onFinish.log = function (message) {
+    onFinish.log = log.addWrap(function (message) {
+      console.dir(message);
       if (message === 'test: done') {
         done();
       }
-    };
+    });
     var wrapped = cb('test', onFinish, functionToBeWrapped);
     wrapped.log('done');
   });

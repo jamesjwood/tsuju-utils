@@ -1,26 +1,39 @@
 
 
 
-var addWrap  = function(f){
-	f.wrap = function(name){
-		var newFunc = function(message){
-			f(name + ": " + message);
-		};
-		return addWrap(newFunc);
-	};
-	return f;
+module.exports = function () {
+  "use strict";
+
+  var logFunction;
+  if (arguments.length === 1) {
+    var emitter = arguments[0];
+    logFunction = function (message) {
+      emitter.emit('log', message);
+    };
+  }
+  else {
+    logFunction = function (message) {
+      console.log(message);
+    };
+  }
+
+  return module.exports.addWrap(logFunction);
+};
+
+module.exports.addWrap = function (f) {
+  "use strict";
+  f.wrap = function (name) {
+    var newFunc = function (message) {
+      f(name + ": " + message);
+    };
+    return module.exports.addWrap(newFunc);
+  };
+  return f;
 };
 
 
-module.exports = function(){
- 	var logFunction = function(message){
- 		console.log(message)
- 	}
- 	return addWrap(logFunction);
-};
 
-
-
-module.exports.logz = function logger (){
-	console.log(logger.caller);
+module.exports.logz = function logger() {
+  "use strict";
+  console.log(logger.caller);
 };

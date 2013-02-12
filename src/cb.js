@@ -5,18 +5,32 @@ module.exports = function () {
   var callback;
   var innerFunction;
   var name;
+  var myLog;
+
   if (arguments.length == 3) {
     name = arguments[0];
     callback = arguments[1];
     innerFunction = arguments[2];
   }
   else {
-    callback = arguments[0];
-    innerFunction = arguments[1];
+    if (arguments.length == 4) {
+      name = arguments[0];
+      callback = arguments[1];
+      myLog = arguments[2];
+      innerFunction = arguments[3];
+
+    }
+    else {
+      callback = arguments[0];
+      innerFunction = arguments[1];
+    }
   }
 
   if (!callback) {
     throw new Error('callback was not passed');
+  }
+  if (typeof myLog === 'undefined') {
+    myLog = callback.log;
   }
   var that = function () {
     var newArgs = [];
@@ -63,21 +77,16 @@ module.exports = function () {
   if (callback.task) {
     that.task = callback.task;
   }
-  if(typeof callback.log !== 'undefined')
-  {
-    if(typeof callback.log.wrap !== 'undefined')
-    {
-        that.log = callback.log.wrap(name);
-    }
-    else
-    {
-      that.log = callback.log;
-    }
-    
+  if (typeof myLog === 'undefined') {
+    that.log = log();
   }
-  else
-  {
-    that.log = function(){};
+  else {
+    if (typeof myLog.wrap === 'undefined') {
+      that.log = myLog;
+    }
+    else {
+      that.log = myLog.wrap(name);
+    }
   }
 
   that.log('start');
