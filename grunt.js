@@ -62,7 +62,7 @@ module.exports = function (grunt) {
 
 
 
-  grunt.registerTask('default', 'lint browserify simplemocha:unit testacular');
+  grunt.registerTask('default', 'lint browserify simplemocha:unit');
   grunt.registerTask('nodeonly', 'lint browserify simplemocha:unit');
   grunt.registerTask('tidy', 'beautify');
 };
