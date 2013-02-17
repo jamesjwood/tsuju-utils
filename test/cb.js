@@ -37,23 +37,6 @@ describe('cb', function () {
     }]);
   });
 
-  it('should pass through logs', function (done) {
-    var functionToBeWrapped = function (a, b, cb) {
-      cb(null, a + b);
-    };
-
-    var onFinish = function (error) {
-
-    };
-    onFinish.log = log.addWrap(function (message) {
-      console.dir(message);
-      if (message === 'test: done') {
-        done();
-      }
-    });
-    var wrapped = cb('test', onFinish, functionToBeWrapped);
-    wrapped.log('done');
-  });
 
   it('should catch errors and pass them back', function (done) {
     var functionToBeWrapped = function (a, b, cb) {
@@ -67,7 +50,7 @@ describe('cb', function () {
     };
     onFinish.log = function (message) {};
 
-    var wrapped = cb('test', onFinish, functionToBeWrapped);
+    var wrapped = cb(onFinish, functionToBeWrapped);
     wrapped.apply(this, [null, 1, 2, function (result) {
       throw new Error('should not get here');
     }]);

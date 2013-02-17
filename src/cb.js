@@ -1,52 +1,56 @@
-var log = require('./log.js');
+var assert = require('assert');
+var safe = require('./safe.js');
 
-module.exports = function () {
+//creates a function with an additiona argument, error, if this is provided then the function will call back rather than run
+module.exports = function (callback, f) {
   "use strict";
-  var callback;
-  var innerFunction;
-  var name;
-  var myLog;
-
-  if (arguments.length == 3) {
-    name = arguments[0];
-    callback = arguments[1];
-    innerFunction = arguments[2];
-  }
-  else {
-    if (arguments.length == 4) {
-      name = arguments[0];
-      callback = arguments[1];
-      myLog = arguments[2];
-      innerFunction = arguments[3];
-
+  assert.ok(callback);
+  assert.ok(f);
+  var that = function () {
+    var error = arguments[0];
+    if (typeof error !== 'undefined') {
+      if (error !== null) {
+        callback.apply(this, [error]);
+        return;
+      }
     }
-    else {
-      callback = arguments[0];
-      innerFunction = arguments[1];
+    var newArgs = [];
+    for (var i = 1; i < arguments.length; i++) {
+      newArgs.push(arguments[i]);
     }
-  }
+    //create a function that will catch all errors
+    var safeF = safe(callback, f);
+    safeF.apply(this, newArgs);
+  };
+  return that;
+};
 
-  var nextTickCallback = function(){
+/*
+module.exports.cbOld = function (callback, innerFunction) {
+  "use strict";
+  assert.ok(callback);
+  assert.ok(innerFunction);
+
+  
+
+  var nextTickCallback = function () {
     var myArgs = arguments;
     process.nextTick(function () {
       callback.apply(this, myArgs);
     });
   };
-  
-  nextTickCallback.log = callback.log;
+
 
   if (!callback) {
     throw new Error('callback was not passed');
   }
-  if (typeof myLog === 'undefined') {
-    myLog = callback.log;
-  }
+
   var that = function () {
     var newArgs = [];
     try {
       var error = arguments[0];
       if (error) {
-          callback(error);
+        callback(error);
         return;
       }
 
@@ -54,13 +58,12 @@ module.exports = function () {
         newArgs.push(arguments[i]);
       }
       //newArgs.push(callback);
-
     }
     catch (er) {
       //var newError = new Error("Error at listrbro.cb");
       //newError.innerException  = er;
       if (callback) {
-          callback(er);
+        callback(er);
         return;
       }
       else {
@@ -68,30 +71,17 @@ module.exports = function () {
       }
     }
     try {
-      that.log('end');
       //process.nextTick(function () {
-        innerFunction.apply(this, newArgs);
+      innerFunction.apply(this, newArgs);
       //});
     }
     catch (er2) {
-        callback(er2);
+      callback(er2);
     }
   };
   if (callback.task) {
     that.task = callback.task;
-  }
-  if (typeof myLog === 'undefined') {
-    that.log = log();
-  }
-  else {
-    if (typeof myLog.wrap === 'undefined') {
-      that.log = myLog;
-    }
-    else {
-      that.log = myLog.wrap(name);
-    }
-  }
-
-  that.log('start');
+  };
   return that;
 };
+*/

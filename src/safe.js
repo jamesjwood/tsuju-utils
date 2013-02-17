@@ -1,104 +1,122 @@
 var assert = require('assert');
 var log = require('./log.js');
 
-module.exports = function(unsafe, service, name){
+module.exports = function (callback, r) {
   "use strict";
-  return serviceFunction(alwaysAsync(catchSyncronousErrors(addLogging(unsafe, name))), service);
+  return module.exports.alwaysAsync(callback, r);
 };
 
-var addLogging = function(f, name){
+module.exports.catchSyncronousErrors = function (callback, f) {
   "use strict";
+  assert.ok(callback);
+  assert.ok(f);
 
-  var that = function(){
+  var that = function () {
+    try {
+      f.apply(this, arguments);
+    }
+    catch (error) {
+      callback(error);
+    }
+  };
+  return that;
+};
+
+
+module.exports.logCalls = function (f) {
+  "use strict";
+  var that = function () {
     var newArgs = argumentsToArray(arguments);
     var callback = newArgs.pop();
-
-    var newCallback = function(error){
-      if(error)
-      {
-         newCallback.log("returning error");
+    var log = newArgs[newArgs.length - 1];
+    assert.ok(callback, 'callback must be provided');
+    var newCallback = function (error) {
+      if (error) {
+        log('ended with error');
       }
-      callback.log(name);
+      else {
+        log('end');
+      }
       callback.apply(this, arguments);
     };
-
-    newCallback.log = callback.log.wrap(name + ":");
     newArgs.push(newCallback);
-    callback.log(name);
+    log('start');
     return f.apply(this, newArgs);
   };
   return that;
 };
 
-var catchSyncronousErrors = function (unsafeFunction){
+
+
+
+module.exports.alwaysAsync = function (callback, maybeAsync) {
   "use strict";
-    var that = function(){
-      var callback = arguments[arguments.length-1];
-      try
-      {
-        unsafeFunction.apply(this, arguments);
+  var that = function () {
+    var myArgs = arguments;
+    var newF = module.exports.catchSyncronousErrors(callback, maybeAsync);
+    process.nextTick(function () {
+      newF.apply(this, myArgs);
+    });
+  };
+  return that;
+};
+
+module.exports.functionThatExitsIfPassedAnError = function (f) {
+  "use strict";
+
+  var that = function () {
+    var error = arguments[0];
+    var callback = arguments[arguments.length - 1];
+    var log = arguments[arguments.length - 2];
+    if (typeof error !== 'undefined') {
+      if (error !== null) {
+        log('passed an error, skipping');
+        callback.apply(this, [error]);
+        return;
       }
-      catch(error)
-      {
-        callback(error);
+    }
+
+    log('not passed an error, running');
+    var newArgs = [];
+    for (var i = 1; i < arguments.length; i++) {
+      newArgs.push(arguments[i]);
+    }
+    f.apply(this, newArgs);
+  };
+  return that;
+};
+
+
+
+
+module.exports.addServiceFunction = function (f, service, name) {
+  "use strict";
+  var that = function () {
+    var newArgs = argumentsToArray(arguments);
+    var callback = newArgs.pop();
+    assert.ok(callback, 'callback must be provided');
+    var newCallback = function (error) {
+      if (typeof error !== 'undefined') {
+        service.emit('error', error);
       }
+      callback.apply(this, arguments);
     };
-    return that;
-  };
 
-
-var alwaysAsync = function(maybeAsync){
-  "use strict";
-  var that = function(){
-      var myArgs = arguments;
-      process.nextTick(function(){
-        maybeAsync.apply(this, myArgs);
-      });
+    var myLog = function (message) {
+      service.emit('log', message);
+    };
+    newCallback.log = log.addWrap(myLog).wrap(name);
+    newArgs.push(newCallback);
+    return f.apply(this, newArgs);
   };
-  return that;
+  service[name] = that;
 };
 
-
-var serviceFunction = function(f, service){
-
+var argumentsToArray = function (oldArgs) {
   "use strict";
-  var that;
-  if(typeof service !== 'undefined')
-  {
-    that = function(){
-      var newArgs = argumentsToArray(arguments);
-      var callback = newArgs.pop();
-      assert.ok(callback,'callback must be provided');
-      var newCallback = function(error){
-        if(error)
-        {
-          service.emit('error', error);
-        }
-        callback.apply(this, arguments);
-      };
-
-      var myLog = function(message){
-        service.emit('log', message);
-      };
-      newCallback.log = log.addWrap(myLog);
-      newArgs.push(newCallback);
-      return f.apply(this, newArgs);
-  };
+  var newArgs = [];
+  for (var i = 0; i < oldArgs.length; i++) {
+    newArgs.push(oldArgs[i]);
   }
-  else
-  {
-    that = f;
-  }
-
-  return that;
-};
-
-var argumentsToArray = function(oldArgs){
-  "use strict";
-      var newArgs = [];
-      for(var i = 0 ; i < oldArgs.length; i ++)
-      {
-          newArgs.push(oldArgs[i]);
-      } 
-      return newArgs;
+  return newArgs;
 };
