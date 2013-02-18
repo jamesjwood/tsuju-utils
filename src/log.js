@@ -10,7 +10,14 @@ module.exports = function () {
   }
   else {
     logFunction = function (message) {
-      console.log(message);
+      if(typeof message == 'object')
+      {
+        console.dir(message);
+      }
+      else
+      {
+        console.log(message);
+      }
     };
   }
 
