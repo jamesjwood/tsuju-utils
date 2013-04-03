@@ -1,4 +1,3 @@
-'use strict';
 var red, blue, reset;
 red   = '\u001b[31m';
 blue  = '\u001b[34m';
@@ -79,7 +78,7 @@ module.exports.addWrap = function (f) {
     var combinePath = function(name, path){
       if(path)
       {
-        return name + ": " + path
+        return name + ": " + path;
       }
       return name;
 
@@ -110,7 +109,7 @@ module.exports.fake = function(){
   that.track = function(){};
   var t = module.exports.addWrap(that);
   return t;
-}
+};
 
 
 module.exports.logz = function logger() {
