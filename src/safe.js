@@ -51,6 +51,10 @@ module.exports.logCalls = function (f) {
 
 module.exports.alwaysAsync = function (callback, maybeAsync) {
   "use strict";
+
+  assert.ok(callback);
+  assert.ok(maybeAsync);
+
   var that = function () {
     var myArgs = arguments;
     var newF = module.exports.catchSyncronousErrors(callback, maybeAsync);

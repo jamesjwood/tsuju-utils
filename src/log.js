@@ -1,7 +1,14 @@
+'use strict';
+var red, blue, reset;
+red   = '\u001b[31m';
+blue  = '\u001b[34m';
+reset = '\u001b[0m';
+
 module.exports = function () {
   "use strict";
 
   var logFunction;
+
   if (arguments.length === 1) {
     var emitter = arguments[0];
     logFunction = function (message) {
@@ -9,10 +16,10 @@ module.exports = function () {
     };
   }
   else {
-    logFunction = function (message) {
-      if(typeof message == 'object')
+    logFunction = function (message, path) {
+      if(console && path)
       {
-        console.dir(message);
+        console.log(path + ":: " + message);
       }
       else
       {
@@ -21,20 +28,89 @@ module.exports = function () {
     };
   }
 
+  logFunction.log = function(message, path){
+    logFunction(message, path);
+  };
+  logFunction.error = function(error, path){
+    logFunction.log(red + error.message + reset, path);
+  };
+  logFunction.dir = function(object, path){
+    logFunction.log(JSON.stringify(object), path);
+  };
+  logFunction.info = function(message, path){
+    logFunction.log(blue + message + reset, path);
+  };
+  logFunction.warn = function(message, path){
+    logFunction.log(blue + message + reset, path);
+  };
+  logFunction.track = function(category, action, label, value){
+    logFunction.log('track: ' + category + ", " + action + ", " + label + ", " + value);
+  };
   return module.exports.addWrap(logFunction);
+};
+
+module.exports.info = function(message){
+  module.exports();
+};
+
+module.exports.error = function(error){
+  module.exports(red + message + reset);
+  if(console)
+  {
+    console.error(error);
+  }
+  
 };
 
 module.exports.addWrap = function (f) {
   "use strict";
   f.wrap = function (name) {
-    var newFunc = function (message) {
-      f(name + ": " + message);
+
+    var newFunc = function (message, path) {
+      if(path)
+      {
+        f(message, name + ": " + path);
+      }
+      else
+      {
+        f(message, name);
+      }
     };
+    var combinePath = function(name, path){
+      if(path)
+      {
+        return name + ": " + path
+      }
+      return name;
+
+    };
+    newFunc.error = function(error, path){
+      f.error(error, combinePath(name, path));
+    };
+    newFunc.info = function(message, path){
+      f.info(message, combinePath(name, path));
+    };
+    newFunc.dir = function(object, path){
+      f.dir(object, combinePath(name, path));
+    };
+    newFunc.log= function(message, path){
+      f.log(message, combinePath(name, path));
+    };
+    newFunc.track = f.track;
     return module.exports.addWrap(newFunc);
   };
   return f;
 };
 
+module.exports.fake = function(){
+  var that = function(){};
+  that.log = function(){};
+  that.error =function(){};
+  that.dir = function(){};
+  that.track = function(){};
+  var t = module.exports.addWrap(that);
+  return t;
+}
 
 
 module.exports.logz = function logger() {
