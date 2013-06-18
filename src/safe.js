@@ -1,3 +1,5 @@
+/*global $apply */
+
 var assert = require('assert');
 var log = require('./log.js');
 
@@ -59,7 +61,7 @@ module.exports.alwaysAsync = function (callback, maybeAsync) {
     var myArgs = arguments;
     var newF = module.exports.catchSyncronousErrors(callback, maybeAsync);
     process.nextTick(function () {
-      newF.apply(this, myArgs);
+        newF.apply(this, myArgs); 
     });
   };
   return that;

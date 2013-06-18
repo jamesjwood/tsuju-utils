@@ -8,12 +8,12 @@ module.exports = function () {
   "use strict";
 
   var logFunction;
-
+  var emitter;
   if (arguments.length === 1) {
-    var emitter = arguments[0];
-    logFunction = function (message) {
-      emitter.emit('log', message);
-    };
+     emitter = arguments[0];
+     logFunction = function(message, path){
+        emitter.emit('log', message, path);
+     };
   }
   else {
     logFunction = function (message, path) {
@@ -27,27 +27,71 @@ module.exports = function () {
       }
     };
   }
+  if(logFunction)
+  {
+     logFunction.log = function(message, path){
+      logFunction(message, path);
+    };
+    logFunction.error = function(error, path){
+      if(console.error)
+      {
+        console.error(error, path);
+        return
+      }
+      logFunction.log(red + error.message + reset, path);
+    };
+    logFunction.dir = function(object, path){
+      if(console.dir)
+      {
+        console.dir(object, path);
+        return;
+      }
+      logFunction.log(JSON.stringify(object), path);
+    };
+    logFunction.info = function(message, path){
+      if(console.info)
+      {
+        console.info(message, path);
+        return;
+      }
+      logFunction.log(blue + message + reset, path);
+    };
+    logFunction.warn = function(message, path){
+      if(console.warn)
+      {
+        console.warn(message, path);
+        return;
+      }
+      logFunction.log(blue + message + reset, path);
+    };
+    logFunction.track = function(category, action, label, value){
+      logFunction.log('track: ' + category + ", " + action + ", " + label + ", " + value);
+    };
+  }
+  else
+  {
+      var addEmit = function(name, fun){
+        fun[name] = function(){
+          var newArgs = [];
+          newArgs.push(name);
+          arguments.map(function(arg){
+            newArgs.push(arg);
+          });
+          emitter.emit.apply(null, newArgs);
+        };
+      };
+      addEmit('log', logFunction);
+      addEmit('error', logFunction);
+      addEmit('dir', logFunction);
+      addEmit('info', logFunction);
+      addEmit('warn', logFunction);
+      addEmit('track', logFunction);
+  }
 
-  logFunction.log = function(message, path){
-    logFunction(message, path);
-  };
-  logFunction.error = function(error, path){
-    logFunction.log(red + error.message + reset, path);
-  };
-  logFunction.dir = function(object, path){
-    logFunction.log(JSON.stringify(object), path);
-  };
-  logFunction.info = function(message, path){
-    logFunction.log(blue + message + reset, path);
-  };
-  logFunction.warn = function(message, path){
-    logFunction.log(blue + message + reset, path);
-  };
-  logFunction.track = function(category, action, label, value){
-    logFunction.log('track: ' + category + ", " + action + ", " + label + ", " + value);
-  };
+
   return module.exports.addWrap(logFunction);
 };
+
 
 module.exports.info = function(message){
   module.exports();
@@ -116,4 +160,14 @@ module.exports.fake = function(){
 module.exports.logz = function logger() {
   "use strict";
   console.log(logger.caller);
+};
+
+module.exports.emitterToLog =  function(emitter, log){
+
+  var logFunctions = ['log', 'error', 'dir', 'warn', 'info'];
+logFunctions.map(function(name){
+  emitter.on(name, function(){
+    log[name].apply(this, arguments);
+  });
+});
 };
