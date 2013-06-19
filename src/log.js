@@ -35,7 +35,7 @@ module.exports = function () {
       if(console.error)
       {
         console.error(error, path);
-        return
+        return;
       }
       logFunction.log(red + error.message + reset, path);
     };

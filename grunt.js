@@ -30,7 +30,7 @@ module.exports = function (grunt) {
     },
     simplemocha: {
       unit: {
-        src: ['test/**/*.js'],
+        src: ['test.js'],
         options: {
           reporter: 'spec',
           timeout: 5000,
@@ -61,8 +61,7 @@ module.exports = function (grunt) {
   // Default task.
 
 
-
-  grunt.registerTask('default', 'lint browserify simplemocha:unit');
+  grunt.registerTask('test', 'lint browserify simplemocha:unit');
   grunt.registerTask('nodeonly', 'lint browserify simplemocha:unit');
   grunt.registerTask('tidy', 'beautify');
 };
