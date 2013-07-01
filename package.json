@@ -28,6 +28,5 @@
   "readmeFilename": "README.md",
   "gitHead": "8f8be6273fad3e77d401f1cbdccf6e4d09f5a058",
   "dependencies": {
-    "node-localstorage": "~0.3.3"
   }
 }
