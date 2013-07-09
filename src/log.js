@@ -18,7 +18,7 @@ module.exports = function () {
     logFunction = function (message, path) {
       if(console && path)
       {
-        console.log(path + ":: " + message);
+        console.log(path + ": " + message);
       }
       else
       {
@@ -32,12 +32,12 @@ module.exports = function () {
       logFunction(message, path);
     };
     logFunction.error = function(error, path){
-      if(console.error)
-      {
-        console.error(error, path);
-        return;
-      }
-      logFunction.log(red + error.message + reset, path);
+      //if(console.error)
+      //{
+      //  console.error(error, path);
+      //  return;
+      // }
+      logFunction.log(red + JSON.stringify(error) + reset, path);
     };
     logFunction.dir = function(object, path){
       if(console.dir)
