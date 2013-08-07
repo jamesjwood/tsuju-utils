@@ -54,7 +54,6 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-shell');
   grunt.loadNpmTasks('grunt-beautify');
   grunt.loadNpmTasks('grunt-simple-mocha');
-  grunt.loadNpmTasks('grunt-css');
   grunt.loadNpmTasks('grunt-browserify');
   grunt.loadNpmTasks('gruntacular');
 
