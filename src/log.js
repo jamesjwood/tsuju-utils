@@ -5,63 +5,64 @@ reset = '\u001b[0m';
 
 module.exports = function () {
   "use strict";
-
-  var logFunction;
   var emitter;
+  var logFunction;
+
+
   if (arguments.length === 1) {
      emitter = arguments[0];
-     logFunction = function(message, path){
-        emitter.emit('log', message, path);
-     };
   }
-  else {
-    logFunction = function (message, path) {
-      if(console && path)
+  if(!emitter)
+  {
+    logFunction = function(message, path){
+      var st;
+      if(typeof console !== 'undefined')
       {
-        console.log(path + ": " + message);
-      }
-      else
-      {
-        console.log(message);
+        if(path)
+        {
+          st  = path + ": " + message;
+        }
+        else
+        {
+          st = message;
+        }
+
+        console.log(st);
       }
     };
-  }
-  if(logFunction)
-  {
-     logFunction.log = function(message, path){
+
+    logFunction.log = function(message, path){
       logFunction(message, path);
     };
+
     logFunction.error = function(error, path){
-      //if(console.error)
-      //{
-      //  console.error(error, path);
-      //  return;
-      // }
-      logFunction.log(red + JSON.stringify(error) + reset, path);
+      logFunction.log(JSON.stringify(error) + reset, red + path);
+       if(typeof console.error !== 'undefined')
+       {
+          console.error(error);
+       }
     };
     logFunction.dir = function(object, path){
-      if(console.dir)
-      {
-        console.dir(object, path);
-        return;
-      }
       logFunction.log(JSON.stringify(object), path);
+      if(typeof console.dir !== 'undefined')
+          {
+          console.dir(object);
+        }
     };
     logFunction.info = function(message, path){
+      logFunction.log(message, path, blue);
       if(console.info)
       {
         console.info(message, path);
-        return;
       }
-      logFunction.log(blue + message + reset, path);
     };
     logFunction.warn = function(message, path){
+      logFunction.log(blue + message + reset, path);
       if(console.warn)
       {
         console.warn(message, path);
         return;
       }
-      logFunction.log(blue + message + reset, path);
     };
     logFunction.track = function(category, action, label, value){
       logFunction.log('track: ' + category + ", " + action + ", " + label + ", " + value);
@@ -69,41 +70,24 @@ module.exports = function () {
   }
   else
   {
-      var addEmit = function(name, fun){
-        fun[name] = function(){
-          var newArgs = [];
-          newArgs.push(name);
-          arguments.map(function(arg){
-            newArgs.push(arg);
-          });
-          emitter.emit.apply(null, newArgs);
-        };
+      logFunction = function(message, path){
+        emitter.emit('log', message, path);
       };
-      addEmit('log', logFunction);
-      addEmit('error', logFunction);
-      addEmit('dir', logFunction);
-      addEmit('info', logFunction);
-      addEmit('warn', logFunction);
-      addEmit('track', logFunction);
-  }
 
+      logFunction.log = function(message, path){
+        logFunction(message, path);
+      };
+      logFunction.dir = function(ob, path){
+        emitter.emit('dir', ob, path);
+      };
+      logFunction.error = function(error, path){
+        emitter.emit('error', error, path);
+      };
+  }
 
   return module.exports.addWrap(logFunction);
 };
 
-
-module.exports.info = function(message){
-  module.exports();
-};
-
-module.exports.error = function(error){
-  module.exports(red + message + reset);
-  if(console)
-  {
-    console.error(error);
-  }
-  
-};
 
 module.exports.addWrap = function (f) {
   "use strict";
@@ -139,6 +123,9 @@ module.exports.addWrap = function (f) {
     newFunc.log= function(message, path){
       f.log(message, combinePath(name, path));
     };
+    newFunc.warn= function(message, path){
+      f.warn(message, combinePath(name, path));
+    };
     newFunc.track = f.track;
     return module.exports.addWrap(newFunc);
   };
@@ -162,11 +149,13 @@ module.exports.logz = function logger() {
 };
 
 module.exports.emitterToLog =  function(emitter, log){
-
-  var logFunctions = ['log', 'error', 'dir', 'warn', 'info'];
-logFunctions.map(function(name){
-  emitter.on(name, function(){
-    log[name].apply(this, arguments);
+  emitter.on('log', function(message, path){
+    log.log(message, path);
   });
-});
+  emitter.on('dir', function(message, path){
+    log.dir(message, path);
+  });
+  emitter.on('error', function(message, path){
+    log.error(message, path);
+  });
 };
