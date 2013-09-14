@@ -4,6 +4,8 @@
 /*global test */
 /*global setup */
 /*global teardown */
+/*global before */
+/*global after */
 
 var events = require('events');
 var sinon = require('sinon');
@@ -76,10 +78,10 @@ describe('log', function () {
 
 	it('be able to wrap', function () {
 		var logr = lib();
-		var logr = logr.wrap('test');
-		logr('hello4');
+		var logs = logr.wrap('test');
+		logs('hello4');
 		assert.equal(log, 'test: hello4');
-		logr('hello5', 'at start');
+		logs('hello5', 'at start');
 		assert.equal(log, 'test: at start: hello5');
 	});
 
@@ -94,7 +96,7 @@ describe('log', function () {
 				mess = m;
 				path = p;
 			}
-		}
+		};
 		var logr = lib(fakeEmit);
 		logr('hello5');
 		assert.equal(type, 'log');
@@ -134,7 +136,7 @@ describe('log', function () {
 	it('emitterToLog', function(){
 		var emitter = new events.EventEmitter();
 		var logr = lib(emitter).wrap('in');
-		var output = lib().wrap('out')
+		var output = lib().wrap('out');
 		lib.emitterToLog(emitter, output);
 
 		logr('hello7');

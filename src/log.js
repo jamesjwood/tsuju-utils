@@ -133,6 +133,7 @@ module.exports.addWrap = function (f) {
 };
 
 module.exports.fake = function(){
+  "use strict";
   var that = function(){};
   that.log = function(){};
   that.error =function(){};
@@ -149,6 +150,7 @@ module.exports.logz = function logger() {
 };
 
 module.exports.emitterToLog =  function(emitter, log){
+  "use strict";
   emitter.on('log', function(message, path){
     log.log(message, path);
   });

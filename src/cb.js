@@ -1,5 +1,7 @@
+
 var assert = require('assert');
-var safe = require('./safe.js');
+var safe = require('./safe');
+
 
 //creates a function with an additiona argument, error, if this is provided then the function will call back rather than run
 module.exports = function (callback, f) {
