@@ -7,10 +7,14 @@ module.exports = function () {
   "use strict";
   var emitter;
   var logFunction;
+  var filter;
 
 
   if (arguments.length === 1) {
      emitter = arguments[0];
+  }
+  if (arguments.length === 2) {
+     filter = arguments[1];
   }
   if(!emitter)
   {
@@ -26,8 +30,17 @@ module.exports = function () {
         {
           st = message;
         }
-
-        console.log(st);
+        if(filter)
+        {
+          if(st.substring(0, filter.length) === filter)
+          {
+             console.log(st);
+          }
+        }
+        else
+        {
+             console.log(st);
+        }
       }
     };
 
@@ -39,6 +52,7 @@ module.exports = function () {
       logFunction.log(JSON.stringify(error) + reset, red + path);
        if(typeof console.error !== 'undefined')
        {
+          error.path = path;
           console.error(error);
        }
     };
