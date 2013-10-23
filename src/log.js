@@ -52,7 +52,6 @@ module.exports = function () {
       logFunction.log(JSON.stringify(error) + reset, red + path);
        if(typeof console.error !== 'undefined')
        {
-          error.path = path;
           console.error(error);
        }
     };
