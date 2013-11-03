@@ -50,6 +50,6 @@ grunt.loadNpmTasks('grunt-simple-mocha');
 
 grunt.loadNpmTasks('grunt-karma');
 
-grunt.registerTask('test', ['default', 'shell:browserify', 'karma']);
-grunt.registerTask('default', ['jshint', 'simplemocha']);
+grunt.registerTask('test', ['default','simplemocha', 'shell:browserify', 'karma']);
+grunt.registerTask('default', ['jshint']);
 };
