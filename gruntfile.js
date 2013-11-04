@@ -32,6 +32,12 @@ module.exports = function(grunt) {
         stdout: true,
         stderr: true,
         failOnError: true
+      },
+      buildStage:{
+        command: 'rm -rf stage; mkdir stage;cp -av web/ stage; rm -rf bin; mkdir bin;',
+        stdout: true,
+        stderr: true,
+        failOnError: true
       }
     },
     karma: {
@@ -44,12 +50,13 @@ module.exports = function(grunt) {
   });
 
 
-grunt.loadNpmTasks('grunt-contrib');
+grunt.loadNpmTasks('grunt-contrib-watch');
+grunt.loadNpmTasks('grunt-contrib-jshint');
 grunt.loadNpmTasks('grunt-shell');
 grunt.loadNpmTasks('grunt-simple-mocha');
 
 grunt.loadNpmTasks('grunt-karma');
 
-grunt.registerTask('test', ['default','simplemocha', 'shell:browserify', 'karma']);
+grunt.registerTask('test', ['default','simplemocha', 'shell:buildStage','shell:browserify', 'karma']);
 grunt.registerTask('default', ['jshint']);
 };
