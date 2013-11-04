@@ -15,7 +15,8 @@
     "grunt-contrib-watch": "0.5.x",
     "grunt-karma": "0.6.x",
     "karma-mocha": "0.1.x",
-    "browserify": "2.35.x"
+    "browserify": "2.35.x",
+    "karma-safari-launcher": "0.1.x"
   },
   "repository": {
     "type": "git",
