@@ -10,8 +10,8 @@ module.exports = function (callback, r) {
 
 module.exports.catchSyncronousErrors = function (callback, f) {
   "use strict";
-  assert.ok(callback);
-  assert.ok(f);
+  assert.ok(callback, 'must provide a callbaack');
+  assert.ok(f, 'must provide a f');
 
   var that = function () {
     try {
@@ -54,8 +54,8 @@ module.exports.logCalls = function (f) {
 module.exports.alwaysAsync = function (callback, maybeAsync) {
   "use strict";
 
-  assert.ok(callback);
-  assert.ok(maybeAsync);
+  assert.ok(callback, 'callback');
+  assert.ok(maybeAsync, 'maybeAsync');
 
   var that = function () {
     var myArgs = arguments;

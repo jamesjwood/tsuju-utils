@@ -6,8 +6,8 @@ var safe = require('./safe');
 //creates a function with an additiona argument, error, if this is provided then the function will call back rather than run
 module.exports = function (callback, f) {
   "use strict";
-  assert.ok(callback);
-  assert.ok(f);
+  assert.ok(callback, 'must provide a callback');
+  assert.ok(f, 'must provide a function');
   var that = function () {
     var error = arguments[0];
     if (typeof error !== 'undefined') {

@@ -6,8 +6,10 @@ module.exports = function(grunt) {
   // Project configuration.
   grunt.initConfig({
     watch: {
-      options: {
-        interrupt: true,
+      js: {
+        options: {
+          interrupt: true
+        },
         files: ['src/*.js', 'test/*.js'],
         tasks: ['default']
       }
@@ -46,17 +48,16 @@ module.exports = function(grunt) {
         singleRun: true,
         browsers: ['Safari']
       }
+    },
+    bump: {
+        options: {},
+        files: [ 'package.json']
     }
   });
 
+require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
 
-grunt.loadNpmTasks('grunt-contrib-watch');
-grunt.loadNpmTasks('grunt-contrib-jshint');
-grunt.loadNpmTasks('grunt-shell');
-grunt.loadNpmTasks('grunt-simple-mocha');
-
-grunt.loadNpmTasks('grunt-karma');
 
 grunt.registerTask('test', ['default','simplemocha', 'shell:buildStage','shell:browserify', 'karma']);
-grunt.registerTask('default', ['jshint']);
+grunt.registerTask('default', ['jshint', 'bump']);
 };

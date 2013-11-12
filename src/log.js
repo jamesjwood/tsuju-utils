@@ -8,8 +8,6 @@ module.exports = function () {
   var emitter;
   var logFunction;
   var filter;
-
-
   if (arguments.length === 1) {
      emitter = arguments[0];
   }
@@ -54,6 +52,10 @@ module.exports = function () {
        {
           console.error(error);
        }
+       if(typeof error.inner !== 'undefined')
+        {
+          logFunction.error(error.inner);
+        }
     };
     logFunction.dir = function(object, path){
       logFunction.log(JSON.stringify(object), path);
@@ -95,6 +97,9 @@ module.exports = function () {
       };
       logFunction.error = function(error, path){
         emitter.emit('error', error, path);
+      };
+      logFunction.warn = function(message, path){
+        emitter.emit('warn', message, path);
       };
   }
 
@@ -152,6 +157,7 @@ module.exports.fake = function(){
   that.error =function(){};
   that.dir = function(){};
   that.track = function(){};
+  that.warn = function(){};
   var t = module.exports.addWrap(that);
   return t;
 };
@@ -172,5 +178,8 @@ module.exports.emitterToLog =  function(emitter, log){
   });
   emitter.on('error', function(message, path){
     log.error(message, path);
+  });
+  emitter.on('warn', function(message, path){
+    log.warn(message, path);
   });
 };
