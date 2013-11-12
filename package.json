@@ -1,10 +1,11 @@
 {
     "name": "utils",
-    "version": "0.0.1-23",
+    "version": "0.0.1-45",
     "description": "shared utils for javascript",
     "main": "index.js",
     "scripts": {
-        "test": "mocha"
+        "test": "mocha",
+        "link": "rm -R node_modules; npm link"
     },
     "devDependencies": {
         "grunt": "0.4.x",
@@ -18,7 +19,7 @@
         "browserify": "2.35.x",
         "karma-safari-launcher": "0.1.x",
         "matchdep": "0.3.x",
-        "grunt-bumpx": "~0.1.5"
+        "grunt-bumpx": "0.1.x"
     },
     "repository": {
         "type": "git",
