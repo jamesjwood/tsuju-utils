@@ -1,6 +1,6 @@
 {
     "name": "utils",
-    "version": "0.0.1-52",
+    "version": "0.0.1-63",
     "description": "shared utils for javascript",
     "main": "index.js",
     "scripts": {
@@ -29,5 +29,7 @@
     "license": "BSD",
     "readmeFilename": "README.md",
     "gitHead": "8f8be6273fad3e77d401f1cbdccf6e4d09f5a058",
-    "dependencies": {}
+    "dependencies": {
+        "is-js": "0.1.x"
+    }
 }
