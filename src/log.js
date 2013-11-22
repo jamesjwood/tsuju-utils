@@ -1,3 +1,4 @@
+/*jshint node: true */
 var red, blue, reset;
 red   = '\u001b[31m';
 blue  = '\u001b[34m';
@@ -47,15 +48,25 @@ module.exports = function () {
     };
 
     logFunction.error = function(error, path){
-      logFunction.log(JSON.stringify(error) + reset, red + path);
+      //TODO: chrome: console.log("%c" + msg, "color:" + color + ";font-weight:bold;");
+      if(typeof window === 'undefined')
+      {
+        logFunction.log(JSON.stringify(error) + reset, red + path);
+      }
+      else
+      {
+        logFunction.log(JSON.stringify(error), 'ERROR: ' + path);
+      }
+      if(typeof printStackTrace !== 'undefined')
+      {
+        var trace = printStackTrace({e: error});
+        logFunction.log(trace.join('\n') + reset, red + path);
+      }
+      
        if(typeof console.error !== 'undefined')
        {
           console.error(error);
        }
-       if(typeof error.inner !== 'undefined')
-        {
-          logFunction.error(error.inner);
-        }
     };
     logFunction.dir = function(object, path){
       logFunction.log(JSON.stringify(object), path);

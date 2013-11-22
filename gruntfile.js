@@ -7,14 +7,6 @@ module.exports = function(grunt) {
   // Project configuration.
   grunt.initConfig({
      watch: {
-      dependencies: {
-        options: {
-          debounceDelay: 5000,
-          interrupt: true
-        },
-        files: getWatchers(pkg),
-        tasks: ['test']
-      },  
       local: {
         options: {
           debounceDelay: 5000,

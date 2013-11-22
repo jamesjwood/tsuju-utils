@@ -1,13 +1,15 @@
-
+/*jshint node: true */
 var assert = require('assert');
 var safe = require('./safe');
+var is = require('./is.js');
 
 
 //creates a function with an additiona argument, error, if this is provided then the function will call back rather than run
 module.exports = function (callback, f) {
   "use strict";
-  assert.ok(callback, 'must provide a callback');
-  assert.ok(f, 'must provide a function');
+  is.function(callback);
+  is.function(f);
+
   var that = function () {
     var error = arguments[0];
     if (typeof error !== 'undefined') {

@@ -1,3 +1,4 @@
+/*jshint node: true */
 module.exports = function () {
   "use strict";
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {

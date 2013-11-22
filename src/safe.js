@@ -1,7 +1,9 @@
+/*jshint node: true */
 /*global $apply */
 
 var assert = require('assert');
 var log = require('./log.js');
+var is = require('./is.js');
 
 module.exports = function (callback, r) {
   "use strict";
@@ -53,9 +55,8 @@ module.exports.logCalls = function (f) {
 
 module.exports.alwaysAsync = function (callback, maybeAsync) {
   "use strict";
-
-  assert.ok(callback, 'callback');
-  assert.ok(maybeAsync, 'maybeAsync');
+  is.function(callback, 'callback');
+  is.function(maybeAsync, 'maybeAsync');
 
   var that = function () {
     var myArgs = arguments;

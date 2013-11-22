@@ -23,6 +23,8 @@ describe('log', function () {
 	var error;
 	var warn;
 
+	var node = (typeof window === 'undefined');
+
 	before(function(){
 		sinon.stub(console, 'dir', function(message){
 			dir = message;
@@ -72,7 +74,14 @@ describe('log', function () {
 		logr.error(err);
 		assert.equal(error, err);
 		logr.error(err, 'at start');
-		assert.equal(log, '\u001b[31mat start: ' + JSON.stringify(err) + '\u001b[0m');
+		if(node)
+		{
+			assert.equal(log, '\u001b[31mat start: ' + JSON.stringify(err) + '\u001b[0m');
+		}
+		else
+		{
+			assert.equal(log, 'ERROR: at start: ' + JSON.stringify(err));
+		}
 		assert.equal(error, err);
 	});
 
@@ -153,6 +162,14 @@ describe('log', function () {
 		var err = {message: 'hello9'};
 		logr.error(err, 'at location');
 		assert.equal(error, err);
-		assert.equal(log, '\u001b[31mout: in: at location: ' + JSON.stringify(err) + '\u001b[0m');
+		if(node)
+		{
+			assert.equal(log, '\u001b[31mout: in: at location: ' + JSON.stringify(err) + '\u001b[0m');
+		}
+		else
+		{
+			assert.equal(log, 'ERROR: out: in: at location: ' + JSON.stringify(err));
+		}
+		
 	});
 });
