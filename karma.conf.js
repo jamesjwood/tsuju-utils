@@ -7,6 +7,7 @@ module.exports = function(config) {
 		frameworks: ['mocha'],
 		basePath : 'stage/',
 		files: [
+			'../node_modules/stacktrace-js/stacktrace.js',
 			'test.js'
 		],
     port: 9876

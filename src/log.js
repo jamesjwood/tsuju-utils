@@ -57,12 +57,12 @@ module.exports = function () {
       {
         logFunction.log(JSON.stringify(error), 'ERROR: ' + path);
       }
+
       if(typeof printStackTrace !== 'undefined')
       {
-        var trace = printStackTrace({e: error});
-        logFunction.log(trace.join('\n') + reset, red + path);
+        //logFunction.dir(printStackTrace());
       }
-      
+
        if(typeof console.error !== 'undefined')
        {
           console.error(error);

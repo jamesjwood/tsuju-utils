@@ -1,35 +1,36 @@
 {
-    "name": "utils",
-    "version": "0.0.1-84",
-    "description": "shared utils for javascript",
-    "main": "index.js",
-    "scripts": {
-        "test": "mocha",
-        "link": "rm -R node_modules; npm link getWatchers;npm link"
-    },
-    "devDependencies": {
-        "grunt": "0.4.x",
-        "grunt-simple-mocha": "0.4.x",
-        "grunt-shell": "0.5.x",
-        "sinon": "1.7.x",
-        "grunt-contrib-jshint": "0.7.x",
-        "grunt-contrib-watch": "0.5.x",
-        "grunt-karma": "0.6.x",
-        "karma-mocha": "0.1.x",
-        "browserify": "2.35.x",
-        "karma-safari-launcher": "0.1.x",
-        "matchdep": "0.3.x",
-        "grunt-bumpx": "0.1.x"
-    },
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/jamesjwood/utils.git"
-    },
-    "author": "James Wood <james.wood@datatransparency.com>",
-    "license": "BSD",
-    "readmeFilename": "README.md",
-    "gitHead": "8f8be6273fad3e77d401f1cbdccf6e4d09f5a058",
-    "dependencies": {
-        "is-js": "0.1.x"
-    }
+  "name": "utils",
+  "version": "0.0.1-86",
+  "description": "shared utils for javascript",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha",
+    "link": "rm -R node_modules; npm link getWatchers;npm link"
+  },
+  "devDependencies": {
+    "grunt": "0.4.x",
+    "grunt-simple-mocha": "0.4.x",
+    "grunt-shell": "0.5.x",
+    "sinon": "1.7.x",
+    "grunt-contrib-jshint": "0.7.x",
+    "grunt-contrib-watch": "0.5.x",
+    "grunt-karma": "0.6.x",
+    "karma-mocha": "0.1.x",
+    "browserify": "2.35.x",
+    "karma-safari-launcher": "0.1.x",
+    "matchdep": "0.3.x",
+    "grunt-bumpx": "0.1.x"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jamesjwood/utils.git"
+  },
+  "author": "James Wood <james.wood@datatransparency.com>",
+  "license": "BSD",
+  "readmeFilename": "README.md",
+  "gitHead": "8f8be6273fad3e77d401f1cbdccf6e4d09f5a058",
+  "dependencies": {
+    "is-js": "0.1.x",
+    "q": "~0.9.7"
+  }
 }
