@@ -1,67 +1,85 @@
-var q = require('q');
+var safe = require('./safe.js');
+var log = require('./log.js');
+var mylog  = log();
 
-q.longStackSupport = true;
 
-var add = function add(a, b){
-	var args = arguments;
-	var deferred = q.defer();
-	process.nextTick(function addtick(){
-		try
+var addAsync = function addAsync(a, b, cbk){
+	process.nextTick(safe(cbk, function addAsync_Callback(){
+		cbk.log('adding');
+		if(a ===3)
 		{
-			deferred.notify('checking');
-			if(a===5)
-			{
-				throw new Error('5 not allowed');
+			throw new Error("I dont like 3's");
+		}
+		cbk(null, a + b, b);
+	}));
+};
+
+var Process = function Process(asyncFunction, onFail){
+	var name = asyncFunction.name;
+
+	var myDone = function myDone(error){
+		that.resolved = true;
+		if(error)
+		{
+			error.args = that.args;
+			that.successful = false;
+			if(that.fail){
+				that.fail(error);
 			}
-			deferred.notify('ok, invoking delayed');
-			deferred.notify('nextTick');
-			deferred.resolve(b + a);
+			else
+			{
+				throw error;
+			}
 		}
-		catch(e)
+		else
 		{
-			e.args = args;
-			deferred.reject(e);
+			that.successful = true;
+			var newArgs = Array.prototype.slice.call(arguments, 1);
+
+			that.then.apply(this, newArgs);
 		}
+	};
+
+	myDone.log = function(message){
+		if(that.log)
+		{
+			that.log(name + ": " + message);
+		}
+	};
+
+	var that = safe(done, function(){
+			that.args = Array.prototype.slice.call(arguments, 0);
+			var args = Array.prototype.slice.call(arguments, 0);
+			args.push(myDone);
+			asyncFunction.apply(this, args);
 	});
 
-	return deferred.promise;
-};
-var log = require('./log');
-var mylog = log();
 
-
-var onDone = function(error){
-	if(error)
-	{
- 		mylog('ERROR 1: ' + error);
- 		mylog(error.stack);
- 		mylog(error.args);
- 		return;
-	}
- 	mylog('SUCCESS');
+	that.then=null;
+	that.fail=onFail;
+	that.resolved = false;
+	that.successful=  null;
+	
+	return that;
 }
 
-var a1 = add(2, 3)
-.then(function addNext(value){
-	mylog('RESULT 1: ' + value);
-	return add(value, 3)
-	.then(function finish(value){
-		console.log('RESULT 2: ' + value);
-		onDone();
-	}, onDone, mylog)
-	.done();
-}, onDone, mylog).done();
+var done  = function(error, val){
+	mylog.error(error);
+}
 
-/*
-var a2 = a1
-.then(function finishNext(value){
-	return add (3, value).then(function(val){
-		console.log('RESULT 2: ' + value);
-	}, function failed(error){
-		console.log('ERROR: ' + error);
-		console.log(error.stack);
-	}, function writeProgress(progress){
-		console.log('PROGRESS 2: getInitial: '  + progress);
-	});
-}).done();
-*/
+
+
+
+
+var j = new Process(addAsync, done);
+j(3, 2);
+var k = new Process(addAsync, done);
+
+j.then = k;
+j.log= mylog.wrap('add 1');
+k.log= mylog.wrap('add 2');
+
+
+k.then = function(val){
+	console.log(val);
+};

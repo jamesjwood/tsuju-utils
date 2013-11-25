@@ -2,7 +2,11 @@
 var red, blue, reset;
 red   = '\u001b[31m';
 blue  = '\u001b[34m';
+green  = '\u001b[32m';
 reset = '\u001b[0m';
+
+
+var supportsColours = (typeof window === 'undefined');
 
 module.exports = function () {
   "use strict";
@@ -49,31 +53,37 @@ module.exports = function () {
 
     logFunction.error = function(error, path){
       //TODO: chrome: console.log("%c" + msg, "color:" + color + ";font-weight:bold;");
-      if(typeof window === 'undefined')
+      if(supportsColours)
       {
-        logFunction.log(JSON.stringify(error) + reset, red + path);
+        process.stdout.write(red);
+      }
+
+      var newE = {};
+      newE.message = error.message;
+      for(var p in error)
+      {
+        newE[p] = error[p];
+      }
+      newE.stack = error.stack.split('\n');
+
+      process.stdout.write('ERROR: ');
+      console.error(newE);
+
+      if(supportsColours)
+      {
+        process.stdout.write(reset);
+      }
+    };
+
+    logFunction.dir = function(object, path){
+      if(typeof console.dir !== 'undefined')
+      {
+        console.dir(object);
       }
       else
       {
-        logFunction.log(JSON.stringify(error), 'ERROR: ' + path);
+        logFunction.log(JSON.stringify(object), path);
       }
-
-      if(typeof printStackTrace !== 'undefined')
-      {
-        //logFunction.dir(printStackTrace());
-      }
-
-       if(typeof console.error !== 'undefined')
-       {
-          console.error(error);
-       }
-    };
-    logFunction.dir = function(object, path){
-      logFunction.log(JSON.stringify(object), path);
-      if(typeof console.dir !== 'undefined')
-          {
-          console.dir(object);
-        }
     };
     logFunction.info = function(message, path){
       logFunction.log(message, path, blue);
