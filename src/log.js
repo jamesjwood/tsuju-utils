@@ -48,7 +48,7 @@ module.exports = function () {
     };
 
     logFunction.log = function(message, path){
-      logFunction(message, path);
+      logFunction(message, "LOG: " + path);
     };
 
     logFunction.error = function(error, path){
@@ -64,9 +64,16 @@ module.exports = function () {
       {
         newE[p] = error[p];
       }
-      newE.stack = error.stack.split('\n');
+      if(error.stack)
+      {
+        newE.stack = error.stack.split('\n').slice(1);
+      }
+      if(path)
+      {
+        newE.path = path;
+      }
 
-      process.stdout.write('ERROR: ');
+      process.stdout.write('ERROR:\n');
       console.error(newE);
 
       if(supportsColours)
