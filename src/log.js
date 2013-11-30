@@ -1,12 +1,22 @@
 /*jshint node: true */
 var red, blue, reset;
 red   = '\u001b[31m';
-blue  = '\u001b[34m';
 green  = '\u001b[32m';
+yellow  = '\u001b[33m';
+blue  = '\u001b[34m';
+pink  = '\u001b[35m';
 reset = '\u001b[0m';
 
 
 var supportsColours = (typeof window === 'undefined');
+
+
+process.env.LOG =  process.env.LOG || 'true';
+
+var logToConsole= function(){
+  return process.env.LOG;
+};
+
 
 module.exports = function () {
   "use strict";
@@ -21,105 +31,141 @@ module.exports = function () {
   }
   if(!emitter)
   {
+
     logFunction = function(message, path){
-      var st;
-      if(typeof console !== 'undefined')
+      if(process.env.LOG === 'true')
       {
         if(path)
         {
-          st  = path + ": " + message;
+          message = path + ": " + message;
         }
-        else
-        {
-          st = message;
-        }
-        if(filter)
-        {
-          if(st.substring(0, filter.length) === filter)
-          {
-             console.log(st);
-          }
-        }
-        else
-        {
-             console.log(st);
-        }
+        console.log('LOG: ' + message);
       }
     };
 
-    logFunction.log = function(message, path){
-      logFunction(message, "LOG: " + path);
-    };
+    logFunction.log = logFunction;
 
     logFunction.error = function(error, path){
       //TODO: chrome: console.log("%c" + msg, "color:" + color + ";font-weight:bold;");
-      if(supportsColours)
+      if(process.env.LOG === true)
       {
-        process.stdout.write(red);
-      }
 
-      var newE = {};
-      newE.message = error.message;
-      for(var p in error)
-      {
-        newE[p] = error[p];
-      }
-      if(error.stack)
-      {
-        newE.stack = error.stack.split('\n').slice(1);
-      }
-      if(path)
-      {
-        newE.path = path;
-      }
+        if(supportsColours)
+        {
+          process.stdout.write(red);
+        }
 
-      process.stdout.write('ERROR:\n');
-      console.error(newE);
+        var newE = {};
+        newE.message = error.message;
+        for(var p in error)
+        {
+          newE[p] = error[p];
+        }
+        if(error.stack)
+        {
+          newE.stack = error.stack.split('\n').slice(1);
+        }
+        if(path)
+        {
+          newE.path = path;
+        }
 
-      if(supportsColours)
-      {
-        process.stdout.write(reset);
+        console.log('ERROR:');
+        
+        console.error(newE);
+
+
+        if(supportsColours)
+        {
+          process.stdout.write(reset);
+        }
       }
     };
 
     logFunction.dir = function(object, path){
-      if(typeof console.dir !== 'undefined')
+       if(process.env.LOG === 'true')
       {
+
+        if(supportsColours)
+        {
+          process.stdout.write(pink);
+        }
+
+        if(path)
+        {
+          console.log('DIR: ' + path);
+        }
+        else
+        {
+          console.log('DIR:');
+        }
         console.dir(object);
-      }
-      else
-      {
-        logFunction.log(JSON.stringify(object), path);
+
+        if(supportsColours)
+        {
+          process.stdout.write(reset);
+        }
       }
     };
     logFunction.info = function(message, path){
-      logFunction.log(message, path, blue);
-      if(console.info)
+
+     if(process.env.LOG === 'true')
       {
-        console.info(message, path);
+
+        if(supportsColours)
+        {
+          process.stdout.write(green);
+        }
+        console.log('INFO: ' + path + ': ' + message);
+        if(supportsColours)
+        {
+          process.stdout.write(reset);
+        }
       }
     };
+
+
     logFunction.warn = function(message, path){
-      logFunction.log(blue + message + reset, path);
-      if(console.warn)
+     if(process.env.LOG === 'true')
       {
-        console.warn(message, path);
-        return;
+
+        if(supportsColours)
+        {
+          process.stdout.write(yellow);
+        }
+        console.warn('INFO: ' + path + ': ' + message);
+        if(supportsColours)
+        {
+          process.stdout.write(reset + '\n');
+        }
       }
     };
+
+
     logFunction.track = function(category, action, label, value){
-      logFunction.log('track: ' + category + ", " + action + ", " + label + ", " + value);
+      if(process.env.LOG === 'true')
+      {
+        if(supportsColours)
+        {
+          process.stdout.write(blue);
+        }
+        console.log('TRACK: ' + category + ", " + action + ", " + label + ", " + value);
+        if(supportsColours)
+        {
+          process.stdout.write(reset + '\n');
+        }
+      }
     };
   }
   else
   {
+
       logFunction = function(message, path){
         emitter.emit('log', message, path);
       };
 
-      logFunction.log = function(message, path){
-        logFunction(message, path);
-      };
+      logFunction.log= logFunction;
+
       logFunction.dir = function(ob, path){
         emitter.emit('dir', ob, path);
       };

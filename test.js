@@ -1,3 +1,6 @@
+process.env.LOG = 'false';
+
+
 module.exports = {};
 module.exports.cb = require('./test/cb.js');
 module.exports.safe = require('./test/safe.js');

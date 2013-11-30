@@ -1,4 +1,4 @@
-var safe = require('./safe.js');
+/*var safe = require('./safe.js');
 var log = require('./log.js');
 var mylog  = log();
 
@@ -162,4 +162,4 @@ p_Add(1, 2)
 
 
 
-
+*/

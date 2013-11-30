@@ -1,6 +1,6 @@
 {
   "name": "utils",
-  "version": "0.0.1-86",
+  "version": "0.0.1-87",
   "description": "shared utils for javascript",
   "main": "index.js",
   "scripts": {
@@ -19,7 +19,8 @@
     "browserify": "2.35.x",
     "karma-safari-launcher": "0.1.x",
     "matchdep": "0.3.x",
-    "grunt-bumpx": "0.1.x"
+    "grunt-bumpx": "0.1.x",
+    "grunt-bumpup": "~0.4.2"
   },
   "repository": {
     "type": "git",
