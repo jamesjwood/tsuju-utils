@@ -33,12 +33,10 @@ module.exports = function(functionToWrap, name){
     var newCbk = function(error){
       if(error)
       {
-        var message  ='Error executing ' + functionName;
-        var e = new Error(message);
-        e.args = oldArgs;
-        e.inner = error;
-        e.functionName = functionName;
-        cbk(e);
+        error.args = oldArgs;
+        error.trace = error.trace || [];
+        error.trace.push(functionName);
+        cbk(error);
       }
       else
       {
