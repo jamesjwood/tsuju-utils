@@ -37,9 +37,13 @@ module.exports = function () {
       {
         if(path)
         {
-          message = path + ": " + message;
+          console.log('LOG: ' + path,  message);
         }
-        console.log('LOG: ' + message);
+        else
+        {
+          console.log('LOG:', message);
+        }
+        
       }
     };
 
@@ -47,39 +51,27 @@ module.exports = function () {
 
     logFunction.error = function(error, path){
       //TODO: chrome: console.log("%c" + msg, "color:" + color + ";font-weight:bold;");
-      if(process.env.LOG === true)
-      {
-
         if(supportsColours)
         {
           process.stdout.write(red);
         }
 
-        var newE = {};
-        newE.message = error.message;
-        for(var p in error)
-        {
-          newE[p] = error[p];
-        }
         if(error.stack)
         {
-          newE.stack = error.stack.split('\n').slice(1);
+          error.stackArray = error.stack.split('\n'); //.slice(1);
         }
         if(path)
         {
-          newE.path = path;
+          error.path = path;
         }
+        path = path || '';
 
-        console.log('ERROR:');
-        
-        console.error(newE);
-
+        console.error('ERROR: ' + path, error);
 
         if(supportsColours)
         {
           process.stdout.write(reset);
         }
-      }
     };
 
     logFunction.dir = function(object, path){
@@ -93,13 +85,12 @@ module.exports = function () {
 
         if(path)
         {
-          console.log('DIR: ' + path);
+          console.dir('DIR: ' + path, object);
         }
         else
         {
-          console.log('DIR:');
+          console.dir('DIR:', object);
         }
-        console.dir(object);
 
         if(supportsColours)
         {
