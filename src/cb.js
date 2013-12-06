@@ -14,10 +14,23 @@ module.exports = function (callback, f) {
     var error = arguments[0];
     if (typeof error !== 'undefined') {
       if (error !== null) {
-        callback.apply(this, [error]);
+        try
+        {
+          callback.apply(this, [error]);
+        }
+        catch(callbackError)
+        {
+          if(console)
+          {
+            console.error(callbackError);
+          }
+          throw callbackError;
+        }
         return;
       }
     }
+
+
     var newArgs = [];
     for (var i = 1; i < arguments.length; i++) {
       newArgs.push(arguments[i]);

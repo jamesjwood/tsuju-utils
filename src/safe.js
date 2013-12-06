@@ -5,22 +5,73 @@ var assert = require('assert');
 var log = require('./log.js');
 var is = require('./is.js');
 
-module.exports = function (callback, r) {
+module.exports = function (callback, maybeAsync) {
   "use strict";
-  return module.exports.alwaysAsync(callback, r);
+  is.function(callback, 'callback');
+  is.function(maybeAsync, 'maybeAsync');
+
+
+  var  errorDetectorCallback = function(error){
+    if (error)
+    {
+      if(that.location)
+      {
+        if(!error.trace)
+        {
+          error.trace = [];
+          var t = error.stack.split('\n')[1];
+          error.trace.push(t);
+          error.args = that.args;
+        }
+        error.trace.push(stack[2]);
+      }
+    }
+    callback.apply(this, arguments);
+  }
+  
+  var myArgs;
+  var that = function () {
+    myArgs = arguments;
+    var newF = module.exports.catchSyncronousErrors(errorDetectorCallback, maybeAsync, stack);
+    process.nextTick(function () {
+        newF.apply(this, myArgs); 
+    });
+  };
+
+  var stack = new Error().stack.split('\n');
+  return that;
 };
 
-module.exports.catchSyncronousErrors = function (callback, f) {
+
+module.exports.alwaysAsync =module.exports;
+
+
+
+
+module.exports.catchSyncronousErrors = function (callback, f, stack) {
   "use strict";
   assert.ok(callback, 'must provide a callbaack');
   assert.ok(f, 'must provide a f');
+
+  var aName = f.name;
 
   var that = function () {
     try {
       f.apply(this, arguments);
     }
     catch (error) {
-      callback(error);
+      var s = stack.splice(2, stack.length);
+      error.trace = s;
+      try
+      {
+        callback(error);      
+      }
+      catch(newE){
+        newE.description = 'Could not call callback with error';
+        newE.originalError = error;
+        console.error(newE);
+        throw newE;
+      }
     }
   };
   return that;
@@ -53,20 +104,7 @@ module.exports.logCalls = function (f) {
 
 
 
-module.exports.alwaysAsync = function (callback, maybeAsync) {
-  "use strict";
-  is.function(callback, 'callback');
-  is.function(maybeAsync, 'maybeAsync');
 
-  var that = function () {
-    var myArgs = arguments;
-    var newF = module.exports.catchSyncronousErrors(callback, maybeAsync);
-    process.nextTick(function () {
-        newF.apply(this, myArgs); 
-    });
-  };
-  return that;
-};
 
 module.exports.functionThatExitsIfPassedAnError = function (f) {
   "use strict";
