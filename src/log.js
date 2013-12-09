@@ -37,7 +37,7 @@ module.exports = function () {
       {
         if(path)
         {
-          console.log('LOG: ' + path,  message);
+          console.log('LOG: ' + path + ": ",  message);
         }
         else
         {
@@ -85,7 +85,7 @@ module.exports = function () {
 
         if(path)
         {
-          console.dir('DIR: ' + path, object);
+          console.log('DIR: ' + path, object);
         }
         else
         {
@@ -165,6 +165,9 @@ module.exports = function () {
       };
       logFunction.warn = function(message, path){
         emitter.emit('warn', message, path);
+      };
+      logFunction.info = function(message, path){
+        emitter.emit('info', message, path);
       };
   }
 
@@ -246,5 +249,8 @@ module.exports.emitterToLog =  function(emitter, log){
   });
   emitter.on('warn', function(message, path){
     log.warn(message, path);
+  });
+  emitter.on('info', function(message, path){
+    log.info(message, path);
   });
 };
