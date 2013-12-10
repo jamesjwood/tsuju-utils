@@ -50,7 +50,7 @@ module.exports.alwaysAsync =module.exports;
 
 
 
-module.exports.catchSyncronousErrors = function (callback, f, stack) {
+module.exports.catchSyncronousErrors = function (callback, f) {
   "use strict";
   assert.ok(callback, 'must provide a callbaack');
   assert.ok(f, 'must provide a f');
