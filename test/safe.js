@@ -10,56 +10,80 @@ var sinon = require('sinon');
 var assert = require('assert');
 
 var safe = require('../src/safe.js');
-var log = require('../src/log.js');
+var loglib = require('../src/log.js');
 
 describe('safe', function () {
   'use strict';
-  var mainLog = function (message) {
-    console.log('safe: ' + message);
-  };
-  log.addWrap(mainLog);
-
-/*
+  var mainLog = loglib();
 
   it('1: should execute the function', function (done) {
     var j = 0;
+    var log = mainLog.wrap('1');
+
     var f = function (log, cb) {
       j = j + 1;
       cb();
     };
-    safe(f)(undefined, mainLog.wrap('1'), function (error) {
+    var onDone = function(error){
+      if(error)
+      {
+        log.error(error);
+      }
+      done(error);
+    };
+    safe(onDone, f)(mainLog.wrap('1'), function (error) {
       assert.ifError(error);
       assert.equal(1, j);
-      done();
+      onDone();
     });
+
   });
 
   it('2: should pass through arguments', function (done) {
-     var j = 0;
+    var j = 0;
+
+    var log = mainLog.wrap('2');
+
     var f = function (message, log, cb) {
       assert.equal("hello", message);
        j = j + 1;
       cb();
     };
-    safe(f)(undefined,  "hello", mainLog.wrap('2'), function (error) {
+
+    var onDone = function(error){
+      if(error)
+      {
+        log.error(error);
+      }
+      done(error);
+    };
+    safe(onDone, f)("hello", mainLog.wrap('2'), function (error) {
       assert.ifError(error);
       assert.equal(1, j);
-      done();
+      onDone();
     });
   });
-
 
   it('3: should catch errors', function (done) {
-    var f = function (message, log, cb) {
-      throw new Error('my error');
-    };
-    safe(f)(undefined, "hello", mainLog.wrap('3'), function (error) {
+    var log = mainLog.wrap('3');
+    
+    var onDone = function(error){
       assert.ok(error);
+      log.dir(error.stacks);
       assert.equal('my error', error.message);
       done();
-    });
+    };
+
+    safe(onDone, function myFunction1() {
+      safe(onDone, function myFuncton2(){
+        var e =  new Error('my error');
+        throw e;
+      })();
+    })();
   });
 
+
+/*
   it('4: should pass back errors', function (done) {
     var f = function (message, log, cb) {
       cb(new Error('my error'));

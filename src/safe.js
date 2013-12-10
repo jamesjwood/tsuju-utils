@@ -10,35 +10,37 @@ module.exports = function (callback, maybeAsync) {
   is.function(callback, 'callback');
   is.function(maybeAsync, 'maybeAsync');
 
+  var myArgs;
+  var futureStack;
 
   var  errorDetectorCallback = function(error){
     if (error)
     {
-      if(that.location)
-      {
-        if(!error.trace)
-        {
-          error.trace = [];
-          var t = error.stack.split('\n')[1];
-          error.trace.push(t);
-          error.args = that.args;
-        }
-        error.trace.push(stack[2]);
-      }
+      error.args = myArgs;
+      var newStack  = error.stack.split('\n');
+      error.stacks = error.stacks || [];
+      error.stacks.push(newStack);
+      error.stacks.push(futureStack);
     }
     callback.apply(this, arguments);
-  }
-  
-  var myArgs;
+  };
+
   var that = function () {
     myArgs = arguments;
-    var newF = module.exports.catchSyncronousErrors(errorDetectorCallback, maybeAsync, stack);
+    var newF = module.exports.catchSyncronousErrors(errorDetectorCallback, maybeAsync);
+    var futureError = new Error();
+    if (futureError.stack)
+    {
+      futureStack = futureError.stack.split('\n');
+    }
+    else
+    {
+      futureStack = [];
+    }
     process.nextTick(function () {
         newF.apply(this, myArgs); 
     });
   };
-
-  var stack = new Error().stack.split('\n');
   return that;
 };
 
@@ -60,8 +62,6 @@ module.exports.catchSyncronousErrors = function (callback, f, stack) {
       f.apply(this, arguments);
     }
     catch (error) {
-      var s = stack.splice(2, stack.length);
-      error.trace = s;
       try
       {
         callback(error);      

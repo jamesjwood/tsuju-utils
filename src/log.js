@@ -82,15 +82,29 @@ module.exports = function () {
         {
           process.stdout.write(pink);
         }
-
-        if(path)
+        if(typeof window !== 'undefined')
         {
-          console.dir('DIR: ' + path, object);
+           if(path)
+          {
+            console.dir('DIR: ' + path, object);
+          }
+          else
+          {
+            console.dir('DIR:', object);
+          }
         }
         else
         {
-          console.dir('DIR:', object);
+          if(path)
+          {
+            console.log('DIR: ' + path, object);
+          }
+          else
+          {
+            console.log('DIR:', object);
+          }   
         }
+
 
         if(supportsColours)
         {
