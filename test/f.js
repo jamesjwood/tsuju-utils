@@ -57,9 +57,7 @@ describe('f', function () {
 
     newF(1, 2, safe(onDone, function(error, result){
       assert.ok(error);
-      assert.equal(error.message, 'Error executing functionName2');
-      assert.ok(error.inner);
-      assert.equal(error.inner.message, 'myError');
+      assert.equal(error.message, 'myError');
       onDone();
     }));
   });

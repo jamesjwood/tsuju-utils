@@ -32,7 +32,6 @@ describe('cb', function () {
     var wrapped = cb(onFinish, functionToBeWrapped);
 
     wrapped.apply(this, [null, 1, 2, function (result) {
-      console.dir(result);
       done();
     }]);
   });
