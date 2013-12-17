@@ -12,15 +12,28 @@ module.exports = function (callback, maybeAsync) {
 
   var myArgs;
   var futureStack;
-
+var futureTrace = []; 
   var  errorDetectorCallback = function(error){
     if (error)
     {
       error.args = myArgs;
-      var newStack  = error.stack.split('\n');
       error.stacks = error.stacks || [];
-      error.stacks.push(newStack);
-      error.stacks.push(futureStack);
+      error.trace = error.trace || [];
+      if(error.stack)
+      {
+        var newStack  = error.stack.split('\n');
+        var newTrace = newStack.slice(1, newStack.length -3);
+        error.stacks.push(newStack);
+        error.trace = error.trace.concat(newTrace);
+      }
+      if(futureStack)
+      {
+        error.stacks.push(futureStack);
+      }
+      if(futureTrace)
+      {
+        error.trace = error.trace.concat(futureTrace);
+      }
     }
     callback.apply(this, arguments);
   };
@@ -29,13 +42,16 @@ module.exports = function (callback, maybeAsync) {
     myArgs = arguments;
     var newF = module.exports.catchSyncronousErrors(errorDetectorCallback, maybeAsync);
     var futureError = new Error();
+    
     if (futureError.stack)
     {
       futureStack = futureError.stack.split('\n');
+      futureTrace = futureStack.slice(2, futureStack.length -3);
     }
     else
     {
-      futureStack = [];
+      futureStack = null;
+      futureTrace =null;
     }
     process.nextTick(function () {
         newF.apply(this, myArgs); 
@@ -69,7 +85,6 @@ module.exports.catchSyncronousErrors = function (callback, f) {
       catch(newE){
         newE.description = 'Could not call callback with error';
         newE.originalError = error;
-        console.error(newE);
         throw newE;
       }
     }
@@ -102,10 +117,6 @@ module.exports.logCalls = function (f) {
 };
 
 
-
-
-
-
 module.exports.functionThatExitsIfPassedAnError = function (f) {
   "use strict";
 
@@ -130,8 +141,6 @@ module.exports.functionThatExitsIfPassedAnError = function (f) {
   };
   return that;
 };
-
-
 
 
 module.exports.addServiceFunction = function (f, service, name) {

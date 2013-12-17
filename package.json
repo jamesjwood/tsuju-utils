@@ -1,6 +1,6 @@
 {
   "name": "utils",
-  "version": "0.0.1-93",
+  "version": "0.0.1-94",
   "description": "shared utils for javascript",
   "main": "index.js",
   "scripts": {

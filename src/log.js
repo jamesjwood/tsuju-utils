@@ -65,9 +65,15 @@ module.exports = function () {
           error.path = path;
         }
         path = path || '';
-
-        console.error('ERROR: ' + path, error);
-
+        if(typeof window === 'undefined')
+        {
+          console.error('ERROR: ' + path, error);
+        }
+        else
+        {
+          console.log('ERROR: ' + path);
+          console.error(error);
+        }
         if(supportsColours)
         {
           process.stdout.write(reset);

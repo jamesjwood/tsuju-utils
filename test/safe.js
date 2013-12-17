@@ -15,7 +15,7 @@ var loglib = require('../src/log.js');
 describe('safe', function () {
   'use strict';
   var mainLog = loglib();
-
+/*
   it('1: should execute the function', function (done) {
     var j = 0;
     var log = mainLog.wrap('1');
@@ -63,23 +63,41 @@ describe('safe', function () {
       onDone();
     });
   });
-
-  it('3: should catch errors', function (done) {
+*/
+  it('3: should catch errors', function myFunctionName(done) {
     var log = mainLog.wrap('3');
     
     var onDone = function(error){
       assert.ok(error);
+      var newStack = e.stack.split('\n');
+      error.stacks.push(newStack)
+      error.trace = error.trace.concat(newStack.slice(1, newStack.length));
       log.dir(error.stacks);
       assert.equal('my error', error.message);
       done();
     };
+    var e = new Error();
 
-    safe(onDone, function myFunction1() {
-      safe(onDone, function myFuncton2(){
-        var e =  new Error('my error');
-        throw e;
-      })();
-    })();
+    var myAsyncFunction = function(cbk){
+      cbk();
+    }
+
+    myAsyncFunction(safe(onDone, function myFunctionName(error){
+        if(error)
+        {
+          onDone(error);
+          return;
+        }
+        myAsyncFunction(safe(onDone, function myFunctionName(error2){
+          if(error2)
+          {
+            onDone(error2);
+            return;
+          }
+          var e =  new Error('my error');
+          throw e;
+        }));
+    }));  
   });
 
 
