@@ -1,6 +1,6 @@
 {
   "name": "utils",
-  "version": "0.0.1-94",
+  "version": "0.0.1-98",
   "description": "shared utils for javascript",
   "main": "index.js",
   "scripts": {
@@ -10,17 +10,17 @@
   "devDependencies": {
     "grunt": "0.4.x",
     "grunt-simple-mocha": "0.4.x",
-    "grunt-shell": "0.5.x",
+    "grunt-shell": "0.6.x",
     "sinon": "1.7.x",
-    "grunt-contrib-jshint": "0.7.x",
+    "grunt-contrib-jshint": "0.8.x",
     "grunt-contrib-watch": "0.5.x",
     "grunt-karma": "0.6.x",
     "karma-mocha": "0.1.x",
-    "browserify": "2.35.x",
+    "browserify": "3.20.x",
     "karma-safari-launcher": "0.1.x",
     "matchdep": "0.3.x",
     "grunt-bumpx": "0.1.x",
-    "grunt-bumpup": "~0.4.2"
+    "grunt-bumpup": "~0.5.0"
   },
   "repository": {
     "type": "git",
@@ -32,6 +32,6 @@
   "gitHead": "8f8be6273fad3e77d401f1cbdccf6e4d09f5a058",
   "dependencies": {
     "is-js": "0.1.x",
-    "q": "~0.9.7"
+    "q": "~1.0.0"
   }
 }

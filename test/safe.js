@@ -69,18 +69,21 @@ describe('safe', function () {
     
     var onDone = function(error){
       assert.ok(error);
-      var newStack = e.stack.split('\n');
-      error.stacks.push(newStack)
-      error.trace = error.trace.concat(newStack.slice(1, newStack.length));
-      log.dir(error.stacks);
+      if (e.stack)
+      {
+        var newStack = e.stack.split('\n');
+        error.stacks.push(newStack);
+        error.trace = error.trace.concat(newStack.slice(1, newStack.length));
+      }
       assert.equal('my error', error.message);
       done();
     };
+
     var e = new Error();
 
     var myAsyncFunction = function(cbk){
       cbk();
-    }
+    };
 
     myAsyncFunction(safe(onDone, function myFunctionName(error){
         if(error)

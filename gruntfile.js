@@ -66,6 +66,6 @@ module.exports = function(grunt) {
 
 
   grunt.registerTask('test', ['jshint','simplemocha', 'shell:buildStage','shell:browserify', 'karma']);
-  grunt.registerTask('development', ['bumpup:prerelease']);
-  grunt.registerTask('production', ['bump:patch']);
+  grunt.registerTask('development',[]);
+  grunt.registerTask('production', []);
 };
