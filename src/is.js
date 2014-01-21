@@ -16,6 +16,10 @@ var isT = function(i, type, alias){
 			throw e;
 		}
 	};
+	if(alias !== type)
+	{
+			i[alias] = i[type];
+	}
 };
 
 var that = {};

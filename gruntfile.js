@@ -39,6 +39,17 @@ module.exports = function(grunt) {
       },
       all: { src: ['test.js'] }
     },
+    browserify: {
+      test: {
+        files: {
+          './stage/test.js': ['./test.js'],
+        },
+        options: {
+          debug: true,
+          ignore: ['domain', 'loggly', 'ga']
+        },
+      }
+    },
     shell: {
       browserify:{
         command: 'node ./node_modules/browserify/bin/cmd.js --debug -o ./stage/test.js -i domain -i loggly -i ga -i pouchdb  -i "./test.js" -e ./test.js;',
@@ -64,8 +75,8 @@ module.exports = function(grunt) {
 
   require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
 
-
-  grunt.registerTask('test', ['jshint','simplemocha', 'shell:buildStage','shell:browserify', 'karma']);
+  grunt.registerTask('install', 'shell:buildStage');
+  grunt.registerTask('test', ['jshint','simplemocha','browserify', 'karma']);
   grunt.registerTask('development',[]);
   grunt.registerTask('production', []);
 };
