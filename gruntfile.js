@@ -61,6 +61,12 @@ module.exports = function(grunt) {
         stdout: true,
         stderr: true,
         failOnError: true
+      },
+      publish:{
+        command: 'npm publish;',
+        stdout: true,
+        stderr: true,
+        failOnError: true
       }
     },
     karma: {
@@ -78,4 +84,5 @@ module.exports = function(grunt) {
   grunt.registerTask('test', ['jshint','simplemocha','browserify', 'karma']);
   grunt.registerTask('development',[]);
   grunt.registerTask('production', []);
+  grunt.registerTask('publish', ['bumpup:patch', 'shell:publish']);
 };
