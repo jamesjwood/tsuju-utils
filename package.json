@@ -1,11 +1,11 @@
 {
-  "name": "utils",
+  "name": "tsuju-utils",
   "version": "0.0.1-98",
   "description": "shared utils for javascript",
   "main": "index.js",
   "scripts": {
     "test": "mocha",
-    "link": "rm -R node_modules; npm link getWatchers;npm link"
+    "link": "rm -R node_modules; npm link"
   },
   "devDependencies": {
     "grunt": "0.4.x",
