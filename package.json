@@ -8,6 +8,7 @@
     "link": "rm -R node_modules; npm link"
   },
   "devDependencies": {
+    "browserify": "2.35.x",
     "grunt": "0.4.x",
     "grunt-simple-mocha": "0.4.x",
     "grunt-shell": "0.5.x",
