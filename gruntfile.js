@@ -1,4 +1,3 @@
-var getWatchers = require('getWatchers');
 var pkg = require('./package.json');
 
 
